@@ -1,0 +1,52 @@
+# Deploys Rancher on upstream cluster
+#
+
+tofu_main_directory: ./tofu/main/harvester
+tofu_parallelism: 100
+
+tofu_variables:
+  # Deploy only upstream cluster
+  deploy_tester_cluster: false
+  deploy_downstream_cluster: false
+
+  project_name: hp
+  namespace: thehejik
+  kubeconfig: /home/thehejik/work/git/dartboard/kubeconfig-harvester.yaml 
+  ssh_public_key_path: /home/thehejik/.ssh/id_ecdsa_shared.pub 
+  ssh_private_key_path: /home/thehejik/.ssh/id_ecdsa_shared
+  user: opensuse
+  password: linux
+
+  networks:
+    - interface_model: virtio
+      interface_type: bridge
+      name: vmnet-shared
+      namespace: default
+      public: true
+      wait_for_lease: true
+
+  disks:
+    - bus: "virtio"
+      name: "disk-0"
+      size: 35
+      type: "disk"
+
+  upstream_cluster:
+    name_prefix: upstream
+    server_count: 1
+    agent_count: 1
+    distro_version: "v1.28.6+k3s2"
+    reserve_node_for_monitoring: false
+
+    # harvester-specific
+    cpu: 4
+    memory: 8
+    tags: { "Owner": "thehejik" }
+    image_name: opensuse-leap-15.5-minimal # https://download.opensuse.org/repositories/home:/IValentin:/branches:/openSUSE:/Templates:/Images:/15.5/images/openSUSE-Leap-15.5-Minimal-VM.x86_64-15.5.0-Cloud-Build3.2.qcow2
+    image_namespace: default
+
+chart_variables:
+  rancher_replicas: 1
+  admin_password: susetesting
+  cert_manager_version: 1.11.1
+  rancher_version: 2.9.1

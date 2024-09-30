@@ -131,6 +131,11 @@ variable "deploy_tester_cluster" {
   default     = true
 }
 
+variable "deploy_downstream_cluster" {
+  description = "Use false not to deploy a tester cluster"
+  default     = true
+}
+
 # "Multi-tenancy" variables
 variable "project_name" {
   description = "Name of this project, used as prefix for resources it creates"
